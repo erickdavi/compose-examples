@@ -1,8 +1,6 @@
 version: "3.7"
 services:
   redis:
-
-  db:
     image: redis:alpine
     ports:
       - "6379"
@@ -12,20 +10,20 @@ services:
       replicas: 2
       update_config:
         parallelism: 1
-        deplay: 10s
-        order: start_first
+        delay: 10s
+        order: start-first
       rollback_config:
         parallelism: 1
         delay: 10s
         failure_action: continue
         monitor: 60s
-        order: stop_first
-       restart_policy:
+        order: stop-first
+      restart_policy:
         condition: on-failure
   db:
     image: postgres:9.4
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - dbdata:/var/lib/postgresql/data
     networks:
       - backend
     deploy:
@@ -55,11 +53,11 @@ services:
       - db
     deploy:
       replicas: 1
-    update_config:
-      parallelism: 1
-      deplay: 10s
-    restart_policy:
-      condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
   worker:
     image: dockersamples/examplevotingapp_worker
     networks: 
@@ -85,6 +83,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
     deploy:
       placement:
+        constraints: [node.role == manager]
 networks:
   frontend:
   backend:
