@@ -17,6 +17,8 @@ services:
     depends_on:
     - db
     image: wordpress:latest
+    volumes:
+    - wp_vol:/var/www/html
     ports: 
     - 8080:80
     environment:
@@ -25,3 +27,4 @@ services:
       WORDPRESS_DB_PASSWORD: wordpress
 volumes:
   db_data:
+  wp_vol:
